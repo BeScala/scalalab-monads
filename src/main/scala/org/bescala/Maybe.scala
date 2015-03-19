@@ -26,7 +26,7 @@ case class Just[+A](value: A) extends Maybe[A] {
 
   def map[B](f: (A) => B): Maybe[B] = Maybe(f(value))
 
-  def filter(f: (A) => Boolean): Maybe[A] = ???
+  def filter(f: (A) => Boolean): Maybe[A] = if (f(value)) this else Empty
 
   def get: A = value
 }
@@ -37,7 +37,7 @@ case object Empty extends Maybe[Nothing] {
 
   def map[B](f: (Nothing) => B): Maybe[B] = Empty
 
-  def filter(f: (Nothing) => Boolean): Maybe[Nothing] = ???
+  def filter(f: (Nothing) => Boolean): Maybe[Nothing] = Empty
 
   def get: Nothing = throw new NoSuchElementException("Empty.get")
 }
