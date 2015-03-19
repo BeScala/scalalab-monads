@@ -7,7 +7,7 @@ import scalaz._
 object ScalazChecks {
 
   implicit val maybeArbitraryInt = Arbitrary(Gen.choose(0, 100).map(Maybe(_)))
-  
+
   implicit val maybeArbitraryInt2MaybeInt =
     Arbitrary(Gen.choose(0, 100).map { i =>
       (i: Int) => Maybe(i)
@@ -24,8 +24,11 @@ object ScalazChecks {
 
   implicit val maybeMonad = new Monad[Maybe] {
     override def point[A](a: => A): Maybe[A] = Maybe(a)
+
     override def bind[A, B](fa: Maybe[A])(f: (A) => Maybe[B]): Maybe[B] = fa.flatMap(f)
   }
 
-  
+  implicit val maybeFunctor = new Functor[Maybe] {
+    override def map[A, B](fa: Maybe[A])(f: (A) => B): Maybe[B] = fa.map(f)
+  }
 }

@@ -13,7 +13,11 @@ class FunctorLawsTest extends FlatSpec with Matchers  {
    * From "Learn you a Haskell for great good!"
    * http://learnyouahaskell.com/
    */
-  it should "abide to first Functor law" in pending
+  it should "abide to first Functor law" in {
+    val maybeAbc = Maybe("abc")
+
+    maybeAbc.map(identity) shouldEqual maybeAbc
+  }
 
 
   /**
@@ -24,5 +28,18 @@ class FunctorLawsTest extends FlatSpec with Matchers  {
    * From "Learn you a Haskell for great good!"
    * http://learnyouahaskell.com/
    */
-  it should "abide to second Functor law" in pending
+  it should "abide to second Functor law" in {
+    val taggingFunc = (text:String) => s"<tag>$text</tag>"
+    val lengthFunc = (text:String) => text.length
+
+    // lengthFunc(taggingFunc("something"))
+    val composed = lengthFunc compose taggingFunc
+
+    val maybeAbc = Maybe("abc")
+
+    val result1 = maybeAbc.map(composed)
+    val result2 = maybeAbc.map(taggingFunc).map(lengthFunc)
+
+    result1 shouldEqual result2
+  }
 }
