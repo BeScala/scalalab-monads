@@ -1,10 +1,10 @@
 package org.bescala
 
-import org.scalatest.{FunSuite, Matchers, FlatSpec}
+import org.scalatest.{Matchers, FlatSpec}
 
 class MonadLawsTest extends FlatSpec with Matchers  {
 
-  behavior of "'Maybe'"
+  behavior of "'Maybe' as a Monad"
 
 
   /**
@@ -18,7 +18,21 @@ class MonadLawsTest extends FlatSpec with Matchers  {
    *
    * ie: proves that `flatMap` method does NOT alter the value
    */
-  it must "abide to the left identity law" in pending
+  it must "abide to the left identity monad law" in {
+    val abc = "abc"
+
+    // a function from String to Maybe[String]
+    // (text:String) => Maybe[String]
+    val taggingFunc = (text:String) => Maybe(s"<tag>$text</tag>")
+
+    (Maybe(abc) flatMap taggingFunc) shouldEqual taggingFunc(abc)
+
+
+    // another function from String to Maybe[Int]
+    // (text:String) => Maybe[Int]
+    val lengthFunc = (text:String) => Maybe(text.length)
+    (Maybe(abc) flatMap lengthFunc) shouldEqual lengthFunc(abc)
+  }
 
   /**
    * The second law states that if we have a monadic value and
@@ -29,7 +43,11 @@ class MonadLawsTest extends FlatSpec with Matchers  {
    *
    * ie: proves that `apply` method does NOT alter the value
    */
-  it must " must abide to the right identity law" in pending
+  it must " must abide to the right identity monad law" in {
+    val maybeAbc = Maybe("abc")
+
+    maybeAbc.flatMap(Maybe(_)) shouldEqual maybeAbc
+  }
 
 
   /**
@@ -40,6 +58,18 @@ class MonadLawsTest extends FlatSpec with Matchers  {
    * http://learnyouahaskell.com/
    *
    */
-  it must " must abide to the associativity law" in pending
+  it must " must abide to the associativity monad law" in {
+    
+    val taggingFunc = (text:String) => Maybe(s"<tag>$text</tag>")
+    val lengthFunc = (text:String) => Maybe(text.length)
+
+    // (m flatMap f) flatMap g
+    val result1 = Maybe("abc") flatMap taggingFunc flatMap lengthFunc
+
+    // m flatMap { x => f(x) flatMap {g} }
+    val result2 = Maybe("abc").flatMap( v => taggingFunc(v).flatMap(lengthFunc) )
+
+    result1 shouldEqual result2
+  }
 
 }
