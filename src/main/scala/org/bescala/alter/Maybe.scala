@@ -7,7 +7,7 @@ import java.util.NoSuchElementException
  * Alternative Maybe implementation with almost all functionality defined in the trait itself.
  *
  * (very similar to Scala's Option type)
- * 
+ *
  */
 trait Maybe[+A] {
 
