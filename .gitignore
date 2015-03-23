@@ -8,4 +8,5 @@
 /bin/
 .project
 .classpath
+.cache
 
